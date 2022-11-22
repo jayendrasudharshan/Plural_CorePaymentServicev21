@@ -1,0 +1,198 @@
+openapi: 3.0.0
+info:
+  title: Card Gateway Connector Service
+  description: Card Gateway Connector Service
+  version: 1.0.0
+servers:
+  - url: https://localhost:8081
+    description: Local machine
+paths:
+  /v2/process/payment:
+    post:
+      tags:
+        - Process Payment Service
+      description: Process Payment operation
+      operationId: process payment
+      parameters:
+        - in: header
+          name: X_VERIFY
+          schema:
+            type: string
+          required: true
+      requestBody:
+        description: Process Payment request
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProcessPaymentRequest'
+      responses:
+        '200':
+          description: Process Payment response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProcessPaymentResponse'
+        '300':
+          description: Process Payment Failure response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProcessPaymentResponse'
+components:
+  schemas:
+    ProcessPaymentRequest:
+      type: object
+      properties:
+        cardData:
+          $ref: '#/components/schemas/CardData'
+        emiData:
+          $ref: '#/components/schemas/EmiData'
+        netbankingData:
+          $ref: '#/components/schemas/NetbankingData'
+        walletData:
+          $ref: '#/components/schemas/WalletData'
+    ProcessPaymentResponse:
+      type: object
+      properties:
+        response_code:
+          type : integer
+        response_message:
+          type : string
+        redirect_url:
+          type : string
+        api_url:
+          type : string
+        offer_scheme:
+          $ref: '#/components/schemas/OfferScheme'
+        schemes:
+          $ref: '#/components/schemas/Schemes'
+        emi_scheme:
+          $ref: '#/components/schemas/Emischeme'
+        product_details:
+          $ref: '#/components/schemas/ProductDetails'
+    CardData:
+      type: object
+      required: [card_number, card_expiry_year, card_expiry_month, card_holder_name,cvv]
+      properties:
+        card_number:
+          type: string
+        card_expiry_year:
+          type: string
+        card_expiry_month:
+          type: string
+        card_holder_name:
+          type: string
+        cvv:
+          type: string
+    EmiData:
+      type: object
+      properties:
+        offer_scheme:
+          $ref: '#/components/schemas/OfferScheme'
+        tenure_id:
+          type: integer
+        tenure_in_month:
+          type: string
+        monthly_installment:
+          type : integer
+          format: int64
+        bank_interest_rate:
+          type : integer
+          format: int64
+        interest_pay_to_bank:
+          type : integer
+          format: int64
+        total_offerred_discount_cashback_amount:
+          type : integer
+          format: int64
+        loan_amount:
+          type : integer
+          format: int64
+        auth_amount:
+          type : integer
+          format: int64
+    OfferScheme:
+      type: object
+      properties:
+        product_details:
+          $ref: '#/components/schemas/ProductDetails'
+        emi_scheme:
+          $ref: '#/components/schemas/Emischeme'
+    ProductDetails:
+      type: object
+      properties:
+        product_code:
+          type: string
+        product_amount:
+          type : integer
+          format: int64
+        subvention_cashback_discount:
+          type : integer
+          format: int64
+        product_discount:
+          type : integer
+          format: int64
+        subvention_cashback_discount_percentage:
+          type : integer
+          format: int64
+        product_discount_percentage:
+          type : integer
+          format: int64
+        subvention_type:
+          type: integer
+        additional_cashback :
+          type: string
+        bank_interest_rate :
+          type : integer
+          format: int64
+        bank_interest_rate_percentage :
+          type : integer
+          format: int64
+        schemes:
+          $ref: '#/components/schemas/Schemes'
+    Schemes:
+      type : object
+      properties:
+        scheme_id:
+          type : integer
+          format: int64
+        program_type:
+          type: integer
+        is_scheme_valid:
+          type : boolean
+    Emischeme:
+      type: object
+      properties:
+        scheme_id:
+          type : integer
+          format: int64
+        program_type:
+          type: integer
+        is_scheme_valid:
+          type: boolean
+    NetbankingData:
+      type: object
+      required: [pay_code]
+      properties:
+        pay_code:
+          type: string
+    WalletData:
+      type: object
+      required: [wallet_code]
+      properties:
+        wallet_code:
+          type: string
+        mobile_number:
+          type: string
+    UpiData:
+      type: object
+      required: [upi_option]
+      properties:
+        vpa:
+          type: string
+        mobile_no :
+          type: string
+        upi_option :
+          type: string
+
